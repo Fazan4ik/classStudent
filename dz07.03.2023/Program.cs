@@ -39,20 +39,65 @@ namespace dz07._03._2023
         public List<int> GradesZachet
         {
             get { return gradesZachet; }
-            set { gradesZachet = value; }
+            set {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "GradesZachet cannot be null");
+                }
+                if (value.Count == 0)
+                {
+                    throw new ArgumentException("GradesZachet cannot be empty", nameof(value));
+                }
+                if (value.Any(x => x < 2 || x > 12))
+                {
+                    throw new ArgumentException(nameof(value), "GradesZachet cannot be >12, <2");
+                }
+                gradesZachet = value; }
         }
         public List<int> GradesHomework
         {
             get { return gradesHomework; }
-            set { gradesHomework = value; }
+            set {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "GradesHomework cannot be null");
+                }
+                if (value.Count == 0)
+                {
+                    throw new ArgumentException("GradesHomework cannot be empty", nameof(value));
+                }
+                if (value.Any(x => x < 2 || x > 12))
+                {
+                    throw new ArgumentException(nameof(value), "GradesHomework cannot >12, <2");
+                }
+                gradesHomework = value; }
         }
         public List<int> GradesExam
         {
             get { return gradesExam; }
-            set { gradesExam = value; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "GradesExam cannot be null");
+                }
+                if (value.Count == 0)
+                {
+                    throw new ArgumentException("GradesExam cannot be empty", nameof(value));
+                }
+                if (value.Any(x => x < 2 || x > 12))
+                {
+                    throw new ArgumentException(nameof(value), "GradesExam cannot be >12, <2");
+                }
+                gradesExam = value; }
         }
         public Student(string t_namesurname, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber)
         {
+            if (string.IsNullOrWhiteSpace(t_namesurname))
+            {
+                throw new ArgumentException("Name cannot be empty", nameof(t_namesurname));
+            }
+
             Namesurname = t_namesurname;
             BirthDate = t_birthDate;
             HomeAddress = t_homeAddress;
@@ -64,6 +109,20 @@ namespace dz07._03._2023
             BirthDate = t_birthDate;
             HomeAddress = t_homeAddress;
             PhoneNumber = t_phoneNumber;
+            if (t_gradesZachet == null)
+            {
+                throw new ArgumentNullException(nameof(t_gradesZachet), "Grades for Zachet cannot be null");
+            }
+
+            if (t_gradesHomework == null)
+            {
+                throw new ArgumentNullException(nameof(t_gradesHomework), "Grades for Homework cannot be null");
+            }
+
+            if (t_gradesExam == null)
+            {
+                throw new ArgumentNullException(nameof(t_gradesExam), "Grades for Exam cannot be null");
+            }
             GradesZachet = t_gradesZachet;
             GradesHomework = t_gradesHomework;
             GradesExam = t_gradesExam;
@@ -140,11 +199,19 @@ namespace dz07._03._2023
 
         public void AddStudent(Student student)
         {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Cannot add a null student to the group.");
+            }
             Students.Add(student);
         }
 
         public void EditStudentData(Student student, string namesurname, DateTime birthDate, string homeAddress, string phoneNumber)
         {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Cannot edit data of a null student.");
+            }
             student.Namesurname = namesurname;
             student.BirthDate = birthDate;
             student.HomeAddress = homeAddress;
@@ -153,6 +220,18 @@ namespace dz07._03._2023
 
         public void EditGroupData(string groupName, string specialization, int courseNumber)
         {
+            if (string.IsNullOrWhiteSpace(groupName))
+            {
+                throw new ArgumentException("Group name cannot be null or empty.", nameof(groupName));
+            }
+            if (string.IsNullOrWhiteSpace(specialization))
+            {
+                throw new ArgumentException("Specialization cannot be null or empty.", nameof(specialization));
+            }
+            if (courseNumber <= 0)
+            {
+                throw new ArgumentException("Course number must be a positive integer.", nameof(courseNumber));
+            }
             GroupName = groupName;
             Specialization = specialization;
             CourseNumber = courseNumber;
@@ -160,6 +239,14 @@ namespace dz07._03._2023
 
         public void TransferStudent(Student student, Group destinationGroup)
         {
+            if (student == null)
+            {
+                throw new ArgumentNullException(nameof(student), "Cannot transfer a null student.");
+            }
+            if (destinationGroup == null)
+            {
+                throw new ArgumentNullException(nameof(destinationGroup), "Destination group cannot be null.");
+            }
             Students.Remove(student);
             destinationGroup.AddStudent(student);
         }
@@ -189,6 +276,14 @@ namespace dz07._03._2023
             }
         }
     }
+
+    public class StudentNameComparer : IComparer<Student>
+    {
+        public int Compare(Student x, Student y)
+        {
+            return string.Compare(x.Namesurname, y.Namesurname  );
+        }
+    }
     class Program
     {
         static void Main()
@@ -199,18 +294,72 @@ namespace dz07._03._2023
             studentEgor.GradesHomework.Add(8);
             studentEgor.GradesHomework.Add(8);
             studentEgor.GradesExam.Add(8);
-
+           
             Student studentNikita = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
             studentNikita.GradesZachet.Add(6);
             studentNikita.GradesZachet.Add(6);
             studentNikita.GradesHomework.Add(6);
             studentNikita.GradesHomework.Add(6);
             studentNikita.GradesExam.Add(6);
+            studentNikita.GradesExam.Add(6);
 
             Group groupStudentov = new Group("P11", "C#", 1);
             groupStudentov.AddStudent(studentEgor);
             groupStudentov.AddStudent(studentNikita);
             groupStudentov.ShowStudents();
+
+            Student[] group = new Student[2];
+            group[0]=new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
+            group[1] = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            Array.Sort(group,new StudentNameComparer());
+
+
+            try
+            {
+                Student student = new Student("Test Test", new DateTime(2000, 1, 1), "Kiiv,Ukraine", "+911", new List<int>(), new List<int>(), new List<int>());
+
+                student.GradesZachet.Add(1);
+                student.GradesZachet.Add(13);
+                student.GradesZachet.Add(1);
+                student.GradesHomework.Add(6);
+                student.GradesHomework.Add(15);
+                student.GradesHomework.Add(9);
+                student.GradesExam.Add(7);
+                student.GradesExam.Add(8);
+                student.GradesExam.Add(10);
+                student.GradesExam.Add(14);
+
+                student.GradesZachet.Add(1);
+                student.GradesZachet.Add(6);
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+
+            try
+            {
+                Group groupstudent = new Group("Group name", "Specialization", 1);
+
+                Student student = new Student(null, new DateTime(2000, 1, 1), "Kiiv,Ukraine", "+911", new List<int>(), new List<int>(), new List<int>());
+
+                groupstudent.AddStudent(student);
+                
+
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
