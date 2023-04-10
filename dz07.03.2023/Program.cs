@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace dz07._03._2023
 {
-    public class Student
+    public class Person
     {
         private string namesurname;
         private DateTime birthDate;
-        private string homeAddress;
-        private string phoneNumber;
-        private List<int> gradesZachet = new List<int>();
-        private List<int> gradesHomework = new List<int>();
-        private List<int> gradesExam = new List<int>();
 
         public string Namesurname
         {
@@ -26,6 +21,50 @@ namespace dz07._03._2023
             get { return birthDate; }
             set { birthDate = value; }
         }
+
+        public Person(string t_namesurname, DateTime t_birthDate)
+        {
+            if (string.IsNullOrWhiteSpace(t_namesurname))
+            {
+                throw new ArgumentException("Name cannot be empty", nameof(t_namesurname));
+            }
+
+            Namesurname = t_namesurname;
+            BirthDate = t_birthDate;
+        }
+
+        public override string ToString()
+        {
+            string result = string.Format("Name Surname: {0}\nDate birth: {1}",
+                Namesurname, BirthDate.ToShortDateString());
+
+            return result;
+        }
+
+        public static bool operator ==(Person p1, Person p2)
+        {
+            if (ReferenceEquals(p1, null) || ReferenceEquals(p2, null))
+            {
+                return false;
+            }
+
+            return p1.Namesurname == p2.Namesurname && p1.BirthDate == p2.BirthDate;
+        }
+
+        public static bool operator !=(Person p1, Person p2)
+        {
+            return !(p1 == p2);
+        }
+    }
+    public class Student:Person
+    {
+
+        private string homeAddress;
+        private string phoneNumber;
+        private List<int> gradesZachet = new List<int>();
+        private List<int> gradesHomework = new List<int>();
+        private List<int> gradesExam = new List<int>();
+
         public string HomeAddress
         {
             get { return homeAddress; }
@@ -103,21 +142,18 @@ namespace dz07._03._2023
         }
 
         public Student(string t_namesurname, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber)
+        : base(t_namesurname, t_birthDate)
         {
             if (string.IsNullOrWhiteSpace(t_namesurname))
             {
                 throw new ArgumentException("Name cannot be empty", nameof(t_namesurname));
             }
-
-            Namesurname = t_namesurname;
-            BirthDate = t_birthDate;
             HomeAddress = t_homeAddress;
             PhoneNumber = t_phoneNumber;
         }
         public Student(string t_namesurname, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber, List<int> t_gradesZachet, List<int> t_gradesHomework, List<int> t_gradesExam)
+        : base(t_namesurname, t_birthDate)
         {
-            Namesurname = t_namesurname;
-            BirthDate = t_birthDate;
             HomeAddress = t_homeAddress;
             PhoneNumber = t_phoneNumber;
             if (t_gradesZachet == null)
@@ -161,7 +197,24 @@ namespace dz07._03._2023
             return !(s1 == s2);
         }
     }
+    public class Aspirant : Student
+    {
+        private string dissertationTopic;
 
+        public string DissertationTopic
+        {
+            get { return dissertationTopic; }
+            set { dissertationTopic = value; }
+        }
+
+        public Aspirant(string t_name, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber, string t_dissertationTopic)
+            : base(t_name, t_birthDate, t_homeAddress, t_phoneNumber)
+        {
+            DissertationTopic = t_dissertationTopic;
+        }
+
+        // Остальные конструкторы и методы класса Aspirant
+    }
     public class Group
     {
         private List<Student> students;
@@ -225,7 +278,27 @@ namespace dz07._03._2023
             Specialization = group.Specialization;
             CourseNumber = group.CourseNumber;
         }
+        public Student this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= students.Count)
+                {
+                    throw new IndexOutOfRangeException("Индекс находится за пределами допустимого диапазона.");
+                }
 
+                return students[index];
+            }
+            set
+            {
+                if (index < 0 || index >= students.Count)
+                {
+                    throw new IndexOutOfRangeException("Индекс находится за пределами допустимого диапазона.");
+                }
+
+                students[index] = value;
+            }
+        }
         public void ShowStudents()
         {
             Console.WriteLine($"Group: {GroupName}, Specialization: {Specialization}, Course: {CourseNumber}");
@@ -367,6 +440,10 @@ namespace dz07._03._2023
             groupStudentov2.AddStudent(studentNikita);
             Console.WriteLine(groupStudentov==groupStudentov2);
 
+            Group g134 = new Group("P134", "C#", 1);
+            Student stud123 = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            g134.AddStudent(stud123);
+            Console.WriteLine(g134[0]);
           /*  Student[] group = new Student[2];
             group[0]=new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
             group[1] = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
