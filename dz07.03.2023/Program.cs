@@ -91,6 +91,17 @@ namespace dz07._03._2023
                 }
                 gradesExam = value; }
         }
+        public double AverageGrade
+        {
+            get
+            {
+                double sum = GradesZachet.Sum() + GradesHomework.Sum() + GradesExam.Sum();
+                double count = GradesZachet.Count + GradesHomework.Count + GradesExam.Count;
+
+                return count == 0 ? 0 : sum / count;
+            }
+        }
+
         public Student(string t_namesurname, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(t_namesurname))
@@ -134,6 +145,21 @@ namespace dz07._03._2023
 
             return result;
         }
+
+        public static bool operator ==(Student s1, Student s2)
+        {
+            if (ReferenceEquals(s1, null) || ReferenceEquals(s2, null))
+            {
+                return false;
+            }
+
+            return s1.AverageGrade == s2.AverageGrade;
+        }
+
+        public static bool operator !=(Student s1, Student s2)
+        {
+            return !(s1 == s2);
+        }
     }
 
     public class Group
@@ -163,7 +189,19 @@ namespace dz07._03._2023
             get { return courseNumber; }
             set { courseNumber = value; }
         }
+        public static bool operator ==(Group group1, Group group2)
+        {
+            if (object.ReferenceEquals(group1, null))
+            {
+                return object.ReferenceEquals(group2, null);
+            }
+            return group1.Equals(group2);
+        }
 
+        public static bool operator !=(Group group1, Group group2)
+        {
+            return !(group1 == group2);
+        }
         public Group()
         {
             groupName = "New Group";
@@ -275,6 +313,21 @@ namespace dz07._03._2023
                 Students.Remove(worstStudent);
             }
         }
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Group other = (Group)obj;
+            return Students.Count == other.Students.Count;
+        }
+
+        public override int GetHashCode()
+        {
+            return Students.Count;
+        }
     }
 
     public class StudentNameComparer : IComparer<Student>
@@ -303,63 +356,69 @@ namespace dz07._03._2023
             studentNikita.GradesExam.Add(6);
             studentNikita.GradesExam.Add(6);
 
+            Console.WriteLine(studentEgor == studentNikita);
+
             Group groupStudentov = new Group("P11", "C#", 1);
             groupStudentov.AddStudent(studentEgor);
             groupStudentov.AddStudent(studentNikita);
             groupStudentov.ShowStudents();
 
-            Student[] group = new Student[2];
+            Group groupStudentov2 = new Group("P12", "C#", 1);
+            groupStudentov2.AddStudent(studentNikita);
+            Console.WriteLine(groupStudentov==groupStudentov2);
+
+          /*  Student[] group = new Student[2];
             group[0]=new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
             group[1] = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            Array.Sort(group,new StudentNameComparer());
+            Array.Sort(group,new StudentNameComparer());*/
 
 
-            try
-            {
-                Student student = new Student("Test Test", new DateTime(2000, 1, 1), "Kiiv,Ukraine", "+911", new List<int>(), new List<int>(), new List<int>());
+            /*            try
+                        {
+                            Student student = new Student("Test Test", new DateTime(2000, 1, 1), "Kiiv,Ukraine", "+911", new List<int>(), new List<int>(), new List<int>());
 
-                student.GradesZachet.Add(1);
-                student.GradesZachet.Add(13);
-                student.GradesZachet.Add(1);
-                student.GradesHomework.Add(6);
-                student.GradesHomework.Add(15);
-                student.GradesHomework.Add(9);
-                student.GradesExam.Add(7);
-                student.GradesExam.Add(8);
-                student.GradesExam.Add(10);
-                student.GradesExam.Add(14);
+                            student.GradesZachet.Add(1);
+                            student.GradesZachet.Add(13);
+                            student.GradesZachet.Add(1);
+                            student.GradesHomework.Add(6);
+                            student.GradesHomework.Add(15);
+                            student.GradesHomework.Add(9);
+                            student.GradesExam.Add(7);
+                            student.GradesExam.Add(8);
+                            student.GradesExam.Add(10);
+                            student.GradesExam.Add(14);
 
-                student.GradesZachet.Add(1);
-                student.GradesZachet.Add(6);
-            }
-            catch (ArgumentNullException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+                            student.GradesZachet.Add(1);
+                            student.GradesZachet.Add(6);
+                        }
+                        catch (ArgumentNullException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
 
 
-            try
-            {
-                Group groupstudent = new Group("Group name", "Specialization", 1);
+                        try
+                        {
+                            Group groupstudent = new Group("Group name", "Specialization", 1);
 
-                Student student = new Student(null, new DateTime(2000, 1, 1), "Kiiv,Ukraine", "+911", new List<int>(), new List<int>(), new List<int>());
+                            Student student = new Student(null, new DateTime(2000, 1, 1), "Kiiv,Ukraine", "+911", new List<int>(), new List<int>(), new List<int>());
 
-                groupstudent.AddStudent(student);
-                
+                            groupstudent.AddStudent(student);
 
-            }
-            catch (ArgumentNullException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+
+                        }
+                        catch (ArgumentNullException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }*/
         }
     }
 }
