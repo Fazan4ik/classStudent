@@ -212,8 +212,6 @@ namespace dz07._03._2023
         {
             DissertationTopic = t_dissertationTopic;
         }
-
-        // Остальные конструкторы и методы класса Aspirant
     }
     public class Group
     {
