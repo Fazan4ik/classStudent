@@ -191,11 +191,18 @@ namespace dz07._03._2023
 
             return s1.AverageGrade == s2.AverageGrade;
         }
-
         public static bool operator !=(Student s1, Student s2)
         {
             return !(s1 == s2);
         }
+        public double AverageHomeWork
+        {
+            get
+            {
+                return (GradesHomework.Sum() / GradesHomework.Count);
+            }
+        }
+
     }
     public class Aspirant : Student
     {
@@ -408,6 +415,19 @@ namespace dz07._03._2023
             return string.Compare(x.Namesurname, y.Namesurname  );
         }
     }
+
+    public class StudentHomeWorkComparer : IComparer<Student>
+    {
+        public int Compare(Student x, Student y)
+        {
+            if (x == null || y == null)
+                throw new ArgumentNullException();
+
+            return x.AverageHomeWork.CompareTo(y.AverageHomeWork);
+        }
+
+    }
+
     class Program
     {
         static void Main()
@@ -442,10 +462,32 @@ namespace dz07._03._2023
             Student stud123 = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
             g134.AddStudent(stud123);
             Console.WriteLine(g134[0]);
-          /*  Student[] group = new Student[2];
-            group[0]=new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
-            group[1] = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            Array.Sort(group,new StudentNameComparer());*/
+
+
+            Student[] studentSort = new Student[5];
+            studentSort[0] = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            studentSort[1] = new Student("Egor Safuanov", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            studentSort[2] = new Student("Egor Egorov", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            studentSort[3] = new Student("Egor Egor", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            studentSort[4] = new Student("Egor Egor123123", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+
+            studentSort[0].GradesHomework.Add(5);
+            studentSort[1].GradesHomework.Add(8);
+            studentSort[2].GradesHomework.Add(11);
+            studentSort[3].GradesHomework.Add(9);
+            studentSort[4].GradesHomework.Add(6);
+
+            Array.Sort(studentSort, new StudentHomeWorkComparer());
+            Console.WriteLine("Sort student list");
+            foreach (var student in studentSort)
+            {
+                Console.WriteLine($"Name: {student.Namesurname}, Average score with HW: {student.AverageHomeWork}");
+            }
+
+            /*  Student[] group = new Student[2];
+              group[0]=new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
+              group[1] = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+              Array.Sort(group,new StudentNameComparer());*/
 
 
             /*            try
