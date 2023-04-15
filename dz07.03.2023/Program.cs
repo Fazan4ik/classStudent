@@ -493,6 +493,10 @@ namespace dz07._03._2023
 
     class Program
     {
+        static int RateCriteria(Student s1, Student s2) 
+        { 
+            return -s1.AverageGrade.CompareTo(s2.AverageGrade);
+        }
         static void Main()
         {
             Student studentEgor = new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
@@ -541,16 +545,26 @@ namespace dz07._03._2023
             studentSort[4].GradesHomework.Add(6);
 
             Array.Sort(studentSort, new StudentHomeWorkComparer());
+            Console.WriteLine();
+
             Console.WriteLine("Sort student list");
             foreach (var student in studentSort)
             {
                 Console.WriteLine($"Name: {student.Namesurname}, Average score with HW: {student.AverageHomeWork}");
             }
+            Console.WriteLine();
 
             Console.WriteLine("Students in the group:");
             foreach (var student in studentSort)
             {
                 Console.WriteLine($"Name: {student.Namesurname}, Average score with exam: {student.AverageExam}");
+            }
+            Console.WriteLine();
+            Array.Sort(studentSort, RateCriteria);
+            Console.WriteLine("Students in the group sort by score:");
+            foreach (var student in studentSort)
+            {
+                Console.WriteLine($"Name: {student.Namesurname}, Average score with all job: {student.AverageGrade}");
             }
 
             /*  Student[] group = new Student[2];
