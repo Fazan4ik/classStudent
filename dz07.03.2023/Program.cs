@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -202,6 +203,20 @@ namespace dz07._03._2023
                 return (GradesHomework.Sum() / GradesHomework.Count);
             }
         }
+        public double AverageExam
+        {
+            get
+            {
+                if (GradesExam.Count <= 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return (GradesExam.Sum() / GradesExam.Count);
+                }
+            }
+        }
 
     }
     public class Aspirant : Student
@@ -220,12 +235,13 @@ namespace dz07._03._2023
             DissertationTopic = t_dissertationTopic;
         }
     }
-    public class Group
+    public class Group : IEnumerable<Student>   
     {
         private List<Student> students;
         private string groupName;
         private string specialization;
         private int courseNumber;
+        public int Count => students.Count;
 
         public List<Student> Students
         {
@@ -406,8 +422,45 @@ namespace dz07._03._2023
         {
             return Students.Count;
         }
-    }
+        public IEnumerator<Student> GetEnumerator()
+        {
+            return new StudentEnumerator(this);
+        }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+    public class StudentEnumerator : IEnumerator<Student>
+    {
+        private Group grouptemp;
+        private int currentIndex = -1;
+
+        public StudentEnumerator(Group group)
+        {
+            this.grouptemp = group;
+        }
+
+        public Student Current => grouptemp[currentIndex];
+
+        object IEnumerator.Current => Current;
+
+        public bool MoveNext()
+        {
+            currentIndex++;
+            return currentIndex < grouptemp.Count;
+        }
+
+        public void Reset()
+        {
+            currentIndex = -1;
+        }
+
+        public void Dispose()
+        {
+        }
+    }
     public class StudentNameComparer : IComparer<Student>
     {
         public int Compare(Student x, Student y)
@@ -426,6 +479,16 @@ namespace dz07._03._2023
             return x.AverageHomeWork.CompareTo(y.AverageHomeWork);
         }
 
+    }
+    public class StudentExamComparer : IComparer<Student>
+    {
+        public int Compare(Student x, Student y)
+        {
+            if (x == null || y == null)
+                throw new ArgumentNullException();
+
+            return x.AverageExam.CompareTo(y.AverageExam);
+        }
     }
 
     class Program
@@ -482,6 +545,12 @@ namespace dz07._03._2023
             foreach (var student in studentSort)
             {
                 Console.WriteLine($"Name: {student.Namesurname}, Average score with HW: {student.AverageHomeWork}");
+            }
+
+            Console.WriteLine("Students in the group:");
+            foreach (var student in studentSort)
+            {
+                Console.WriteLine($"Name: {student.Namesurname}, Average score with exam: {student.AverageExam}");
             }
 
             /*  Student[] group = new Student[2];
