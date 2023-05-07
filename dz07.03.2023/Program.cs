@@ -576,7 +576,7 @@ namespace dz07._03._2023
                             Console.WriteLine($"Name: {student.Namesurname}, Average score with all job: {student.AverageGrade}");
                         }*/
             File.WriteAllText("C:/Users/Egor/group.txt", string.Empty);
-            FileStream fs = new FileStream("C:/Users/Egor/group.txt", FileMode.Append, FileAccess.Write);
+            FileStream fs = new FileStream("C:/Users/group.txt", FileMode.Append, FileAccess.Write);
             SortedDictionary<string, Student> students = new SortedDictionary<string, Student>();
            // Student[] students = new Student[3];
             Student studentEgor = new Student("Egor Safuanov","065", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
