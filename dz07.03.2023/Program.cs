@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,13 +61,18 @@ namespace dz07._03._2023
     }
     public class Student:Person
     {
-
+        private string userID;
         private string homeAddress;
         private string phoneNumber;
         private List<int> gradesZachet = new List<int>();
         private List<int> gradesHomework = new List<int>();
         private List<int> gradesExam = new List<int>();
 
+        public string UserID
+        {
+            get { return userID; }
+            set { userID = value; }
+        }
         public string HomeAddress
         {
             get { return homeAddress; }
@@ -142,19 +149,21 @@ namespace dz07._03._2023
             }
         }
 
-        public Student(string t_namesurname, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber)
+        public Student(string t_namesurname, string t_userID, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber)
         : base(t_namesurname, t_birthDate)
         {
             if (string.IsNullOrWhiteSpace(t_namesurname))
             {
                 throw new ArgumentException("Name cannot be empty", nameof(t_namesurname));
             }
+            UserID = t_userID;
             HomeAddress = t_homeAddress;
             PhoneNumber = t_phoneNumber;
         }
-        public Student(string t_namesurname, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber, List<int> t_gradesZachet, List<int> t_gradesHomework, List<int> t_gradesExam)
+        public Student(string t_namesurname, string t_userID, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber, List<int> t_gradesZachet, List<int> t_gradesHomework, List<int> t_gradesExam)
         : base(t_namesurname, t_birthDate)
         {
+            UserID = t_userID;
             HomeAddress = t_homeAddress;
             PhoneNumber = t_phoneNumber;
             if (t_gradesZachet == null)
@@ -229,8 +238,8 @@ namespace dz07._03._2023
             set { dissertationTopic = value; }
         }
 
-        public Aspirant(string t_name, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber, string t_dissertationTopic)
-            : base(t_name, t_birthDate, t_homeAddress, t_phoneNumber)
+        public Aspirant(string t_name,string t_ID, DateTime t_birthDate, string t_homeAddress, string t_phoneNumber, string t_dissertationTopic)
+            : base(t_name, t_ID, t_birthDate, t_homeAddress, t_phoneNumber)
         {
             DissertationTopic = t_dissertationTopic;
         }
@@ -294,7 +303,7 @@ namespace dz07._03._2023
 
         public Group(Group group)
         {
-            Students = group.Students.Select(s => new Student(s.Namesurname, s.BirthDate, s.HomeAddress, s.PhoneNumber, s.GradesZachet, s.GradesHomework, s.GradesExam)).ToList();
+            Students = group.Students.Select(s => new Student(s.Namesurname, s.UserID,s.BirthDate, s.HomeAddress, s.PhoneNumber, s.GradesZachet, s.GradesHomework, s.GradesExam)).ToList();
             GroupName = group.GroupName;
             Specialization = group.Specialization;
             CourseNumber = group.CourseNumber;
@@ -499,73 +508,117 @@ namespace dz07._03._2023
         }
         static void Main()
         {
-            Student studentEgor = new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
-            studentEgor.GradesZachet.Add(8);
-            studentEgor.GradesZachet.Add(8);
-            studentEgor.GradesHomework.Add(8);
-            studentEgor.GradesHomework.Add(8);
-            studentEgor.GradesExam.Add(8);
-           
-            Student studentNikita = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            studentNikita.GradesZachet.Add(6);
-            studentNikita.GradesZachet.Add(6);
-            studentNikita.GradesHomework.Add(6);
-            studentNikita.GradesHomework.Add(6);
-            studentNikita.GradesExam.Add(6);
-            studentNikita.GradesExam.Add(6);
+            /*            Student studentEgor = new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
+                        studentEgor.GradesZachet.Add(8);
+                        studentEgor.GradesZachet.Add(8);
+                        studentEgor.GradesHomework.Add(8);
+                        studentEgor.GradesHomework.Add(8);
+                        studentEgor.GradesExam.Add(8);
 
-            Console.WriteLine(studentEgor == studentNikita);
+                        Student studentNikita = new Student("Nikita Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        studentNikita.GradesZachet.Add(6);
+                        studentNikita.GradesZachet.Add(6);
+                        studentNikita.GradesHomework.Add(6);
+                        studentNikita.GradesHomework.Add(6);
+                        studentNikita.GradesExam.Add(6);
+                        studentNikita.GradesExam.Add(6);
 
-            Group groupStudentov = new Group("P11", "C#", 1);
-            groupStudentov.AddStudent(studentEgor);
-            groupStudentov.AddStudent(studentNikita);
-            groupStudentov.ShowStudents();
+                        Console.WriteLine(studentEgor == studentNikita);
 
-            Group groupStudentov2 = new Group("P12", "C#", 1);
-            groupStudentov2.AddStudent(studentNikita);
-            Console.WriteLine(groupStudentov==groupStudentov2);
+                        Group groupStudentov = new Group("P11", "C#", 1);
+                        groupStudentov.AddStudent(studentEgor);
+                        groupStudentov.AddStudent(studentNikita);
+                        groupStudentov.ShowStudents();
 
-            Group g134 = new Group("P134", "C#", 1);
-            Student stud123 = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            g134.AddStudent(stud123);
-            Console.WriteLine(g134[0]);
+                        Group groupStudentov2 = new Group("P12", "C#", 1);
+                        groupStudentov2.AddStudent(studentNikita);
+                        Console.WriteLine(groupStudentov==groupStudentov2);
+
+                        Group g134 = new Group("P134", "C#", 1);
+                        Student stud123 = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        g134.AddStudent(stud123);
+                        Console.WriteLine(g134[0]);
 
 
-            Student[] studentSort = new Student[5];
-            studentSort[0] = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            studentSort[1] = new Student("Egor Safuanov", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            studentSort[2] = new Student("Egor Egorov", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            studentSort[3] = new Student("Egor Egor", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
-            studentSort[4] = new Student("Egor Egor123123", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        Student[] studentSort = new Student[5];
+                        studentSort[0] = new Student("Egor Shevchenko", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        studentSort[1] = new Student("Egor Safuanov", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        studentSort[2] = new Student("Egor Egorov", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        studentSort[3] = new Student("Egor Egor", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                        studentSort[4] = new Student("Egor Egor123123", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
 
-            studentSort[0].GradesHomework.Add(5);
-            studentSort[1].GradesHomework.Add(8);
-            studentSort[2].GradesHomework.Add(11);
-            studentSort[3].GradesHomework.Add(9);
-            studentSort[4].GradesHomework.Add(6);
+                        studentSort[0].GradesHomework.Add(5);
+                        studentSort[1].GradesHomework.Add(8);
+                        studentSort[2].GradesHomework.Add(11);
+                        studentSort[3].GradesHomework.Add(9);
+                        studentSort[4].GradesHomework.Add(6);
 
-            Array.Sort(studentSort, new StudentHomeWorkComparer());
-            Console.WriteLine();
+                        Array.Sort(studentSort, new StudentHomeWorkComparer());
+                        Console.WriteLine();
 
-            Console.WriteLine("Sort student list");
-            foreach (var student in studentSort)
+                        Console.WriteLine("Sort student list");
+                        foreach (var student in studentSort)
+                        {
+                            Console.WriteLine($"Name: {student.Namesurname}, Average score with HW: {student.AverageHomeWork}");
+                        }
+                        Console.WriteLine();
+
+                        Console.WriteLine("Students in the group:");
+                        foreach (var student in studentSort)
+                        {
+                            Console.WriteLine($"Name: {student.Namesurname}, Average score with exam: {student.AverageExam}");
+                        }
+                        Console.WriteLine();
+                        Array.Sort(studentSort, RateCriteria);
+                        Console.WriteLine("Students in the group sort by score:");
+                        foreach (var student in studentSort)
+                        {
+                            Console.WriteLine($"Name: {student.Namesurname}, Average score with all job: {student.AverageGrade}");
+                        }*/
+            File.WriteAllText("C:/Users/Egor/group.txt", string.Empty);
+            FileStream fs = new FileStream("C:/Users/Egor/group.txt", FileMode.Append, FileAccess.Write);
+            SortedDictionary<string, Student> students = new SortedDictionary<string, Student>();
+           // Student[] students = new Student[3];
+            Student studentEgor = new Student("Egor Safuanov","065", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
+            Student studentNikita = new Student("Nikita Shevchenko","052", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+            Student studentMikola = new Student("Mikola Shevchenko", "075", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student1 = new Student("Student1", "001", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student2 = new Student("Student2", "002", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student3 = new Student("Student3", "003", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student4 = new Student("Student4", "004", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student5 = new Student("Student5", "005", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student6 = new Student("Student6", "006", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student7 = new Student("Student7", "007", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+                Student student8 = new Student("Student8", "008 ", new DateTime(2006, 03, 29), "Odesa", "+38(097)-123-123-123");
+
+
+            students.Add(studentEgor.UserID, studentEgor);
+            students.Add(studentNikita.UserID, studentNikita);
+            students.Add(studentMikola.UserID, studentMikola);
+            students.Add(student1.UserID, student1);
+            students.Add(student2.UserID, student2);
+            students.Add(student3.UserID, student3);
+            students.Add(student4.UserID, student4);
+            students.Add(student5.UserID, student5);
+            students.Add(student6.UserID, student6);
+            students.Add(student7.UserID, student7);
+
+
+
+            using (StreamWriter writer = new StreamWriter(fs))
             {
-                Console.WriteLine($"Name: {student.Namesurname}, Average score with HW: {student.AverageHomeWork}");
+                foreach (KeyValuePair<string, Student> student in students)
+                {
+                    writer.WriteLine("Name -> {0}, ID -> {1}", student.Value.Namesurname, student.Value.UserID);
+                }
             }
-            Console.WriteLine();
+            Console.WriteLine("Data written to file.");
 
-            Console.WriteLine("Students in the group:");
-            foreach (var student in studentSort)
-            {
-                Console.WriteLine($"Name: {student.Namesurname}, Average score with exam: {student.AverageExam}");
-            }
-            Console.WriteLine();
-            Array.Sort(studentSort, RateCriteria);
-            Console.WriteLine("Students in the group sort by score:");
-            foreach (var student in studentSort)
-            {
-                Console.WriteLine($"Name: {student.Namesurname}, Average score with all job: {student.AverageGrade}");
-            }
+
+            /*            foreach (KeyValuePair<string, Student> student in students)
+                        {
+                            Console.WriteLine("Name -> {0}, ID -> {1}",student.Value.Namesurname,student.Value.UserID);
+                        }*/
 
             /*  Student[] group = new Student[2];
               group[0]=new Student("Egor Safuanov", new DateTime(2006, 03, 26), "Odesa", "+38(097)-123-123-123");
